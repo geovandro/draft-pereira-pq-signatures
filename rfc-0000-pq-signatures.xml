@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+ <!-- more info about writing RFCs in XML at https://tools.ietf.org/pdf/rfc2629.pdf-->
+ <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+ ]>
+
+	 	<!-- never use "<" or "&" in your text. Instead, use either "&lt;" or "&amp;", respectively. -->
+	 	<!-- <workgroup>Network Working Group</workgroup> -->
+
+<?rfc toc="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+
+ <rfc number="0000" ipr="trust200902" category="std" updates="3279" docName="draft-pereira-pq-signatures-00">
+ 	<front>
+		<title abbrev="pereira-certificate-stack">Internet X.509 Public Key Infrastructure: Additional Post-Quantum Signature Algorithms</title>
+
+		<author initials="G.C." surname="C. F. Pereira" fullname="Geovandro C. C. F. Pereira">
+			<organization abbrev="evolutionQ Inc. / IQC, UWaterloo"> evolutionQ Inc. / IQC, University of Waterloo </organization>
+			<address>
+			<email>geovandro.pereira@evolutionq.com</email>
+			</address>		 
+		</author>
+
+		<date year="2019" month="October" day="11"/>
+		 
+		<!-- <area>General</area>
+		 	 Probable AREAS:
+		 	'LAMPS': Limited Additional Mechanisms for PKIX and SMIME (working group) https://tools.ietf.org/wg/lamps, e.g. https://tools.ietf.org/html/draft-truskovsky-lamps-pq-hybrid-x509-01 
+		 	'Network Working Group', e.g. https://tools.ietf.org/html/draft-stebila-tls-hybrid-design-00 --> 
+
+		 <keyword>Internet-Draft</keyword>
+		 <abstract>
+			<t> This document updates <xref target="RFC3279"/> by specifying additional algorithm identifiers and ASN.1 encoding rules for the nine selected post-quantum digital signature algorithms in the second round of NIST standardization process <xref target="NIST-PQ"/> when using SHA3 or SHAKE as the underlying hashing algorithms. This specification applies to the Internet X.509 Public Key infrastructure (PKI) <xref target="RFC5280"/> and its post-quantum counterpart <xref target="PQ-X.509"/>, when post-quantum digital signatures are used to sign certificates and certificate revocation lists (CRLs).
+			</t>
+
+
+		 </abstract>		 
+	</front>
+ 	<middle>
+ 		<section anchor="introduction" title="Introduction"> 
+ 			<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <xref target="RFC2119"/>.</t>
+ 			
+			<t> This document profiles material under standardization by the NIST Post-Quantum Cryptography standardization process <xref target="NIST-PQ"/>. In particular, it provides the definition of algorithm identifiers and ASN.1 encoding formats for post-quantum digital signatures and subject public keys used in the post-quantum setting of the Internet X.509 Public Key Infrastructure (PKI) <xref target="RFC5280"/>, <xref target="PQ-X.509"/>. The nine digital signature algorithm candidates in the second round of NIST process are considered along with their multiple security categories. Although not all nine algorithms may become actual standards, this specification will certainly cover the standardized ones.</t>
+
+ 			<t> Precisely, this document defines additional contents for the "signatureAlgorithm", "signatureValue", and "signature" fields within Internet X.509 certificates and CRLs <xref target="RFC5280"/> when these objects are signed using post-quantum signature algorithms with SHA3 or SHAKE hash algorithms <xref target="FIPS202"/>. The SHA3 and SHAKE instances explicitly used in the object identifiers (OID) definitions are the ones adopted by the candidates of the second round specification of NIST.</t>
+			
+			<t> The OIDs provided are defined under the NIST signature algorithm branch in the OID tree <xref target="NIST-OIDS"/>, in particular, the branch joint-iso-itu-t -> country -> us -> organization -> gov -> csor -> nistAlgorithm -> sigAlgs. Note that sigAlgs contains identifiers ranging from 1-16, allocated for (EC)DSA and RSA. This specification reserves identifiers starting from 20 and above for the new post-quantum signatures with their different parameter sets.</t>
+
+			<t> This document extends <xref target="RFC3279"/>, in particular Sections 2.1, 2.2.2, and 2.2.3 and complements the update <xref target="RFC5758"/>, which focuses on the specification of extra classical signature algorithms. OIDs defined here are crucial for <xref target="PQ-X.509"/>, which extends <xref target="RFC5280"/> for accepting post-quantum X.509 certificates.</t> 
+
+  		<section anchor="terminology" title="Terminology">
+ 			<t><list style="symbols">
+ 				<t>B: bytes </t> 				
+ 				<t>CRL: Certificate Revocation List</t> 				
+ 				<t>KiB: Kibibytes </t> 				
+ 				<t>MiB: Mibibytes </t> 		 				
+ 				<t>NIST: National Institute of Standards and Technology.</t>
+ 				<t>OID: Object Identifier</t>
+ 				<t>SHA3: Secure Hash Algorithm-3</t> 						
+ 				<t>XOF: eXtendable-Output hash Function</t> 				
+ 			</list></t>
+ 		</section>
+
+ 		</section>
+ 		<section anchor="hash-functions" title="Hash Functions">
+		<t> This section identifies hash functions for use with
+		   post-quantum digital signature algorithms in <xref target="PQ-X.509"/>. The hash functions SHA3-256, SHA3-384, SHA3-512 produce 256-bit, 384-bit and 512-bit outputs, respectively. On the other hand, functions SHAKE-128 and SHAKE-256 provide extendable (and thus variable) output sizes. They are all
+		   described in the "Secure Hash Standard" <xref target="FIPS202"/>. It is important to note that most of signature candidates in the NIST process adopt SHAKE which is the eXtendable-Output Function (XOF) of SHA3. The OIDs for SHAKE instances are retrieved from <xref target="NIST-OIDS"/>.
+		   
+		   The hash functions adopted by the NIST candidates have the following OIDs: </t>
+
+		  <t>
+		  id-sha3-256 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16)
+		                                      us(840) organization(1) gov(101)
+		                                      csor(3) nistAlgorithm(4)
+		                                      hashAlgs(2) 8 }</t>
+		  <t>
+		  id-sha3-384 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16)
+		                                      us(840) organization(1) gov(101)
+		                                      csor(3) nistAlgorithm(4)
+		                                      hashAlgs(2) 9 }</t>
+		  <t>
+		  id-sha3-512 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16)
+		                                      us(840) organization(1) gov(101)
+		                                      csor(3) nistAlgorithm(4)
+		                                      hashAlgs(2) 10 }</t>		                                      
+		  <t>
+		  id-shake-128 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16) 
+		  									  us(840) organization(1) gov(101) 
+		  									  csor(3) nistAlgorithm(4) 
+		  									  hashAlgs(2) 11} }</t>
+		  <t>								  
+		  id-shake-256 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16) 
+		  									  us(840) organization(1) gov(101) 
+		  									  csor(3) nistAlgorithm(4) 
+		  									  hashAlgs(2) 12} }</t>				  
+		  <t>
+		   Where id-sha3-&lt;output size&gt; refers to the Permutation-Based Hash functions and id-shake-&lt;output size&gt; to the eXtendable-Output Hash functions defined in <xref target="FIPS202"/>. 
+		   When one of these OIDs appears in an AlgorithmIdentifier, all implementations MUST accept both NULL and absent parameters as legal and equivalent encodings.
+
+		   Conforming certification authority (CA) implementations SHOULD use SHA3-256, SHA3-384, SHA3-512, SHAKE-128 or SHAKE-256 when generating post-quantum certificates or
+		   CRLs according to <xref target="PQ-X.509"/>. </t>
+		</section>
+
+ 		<section anchor="pq-signatures" title="Post-quantum Digital Signature Algorithms">
+			<t>This section defines OIDs for the following signature algorithms: Crystals-Dilithium, Falcon, GeMSS, LUOV, MQDSS, PICNIC, qTESLA, Rainbow and SPHINCS+ 
+			   when instantiated with SHA3-256, SHA3-384, SHA3-512, SHAKE-128 or SHAKE-256. 
+			   Note that each algorithm can offer parameter sets for at most five quantum security categories (numbered 1 to 5), as suggested by NIST <xref target="NIST-PQ"/>.</t>
+
+			<t> Instead of following the OID name convention for classical signatures <xref target="RFC5758"/> consisting of id-&lt;signature algorithm&gt;-with-&lt;hash function&gt; that uniquely identifies parameter sets in those cases, the convention id-&lt;signature algorithm&gt;-&lt;categoryX&gt;-&lt;hash function&gt; is employed here in order to avoid potential ambiguities appearing in the post-quantum cases. To see this, note that it is possible to find parameter sets for different security categories using the same underlying hash function. For instance, SHAKE-128 (or SHAKE-256) is frequently used across multiple security categories of a same post-quantum signature. Thus the combination algorithm name plus hash output size does not uniquely identify a parameter set. The same issue happens if algorithm name and security category is used since a single security category can have multiple parameter sets with different hash functions. For example, SPHINCS+ have options with SHA3 and SHAKE for a same security category. 
+
+			Remark. Some signature algorithms offer parameter sets whose security may lie in between two different security categories due to the lack of a precise understanding of the main attacks or due to a loose reduction.
+			In those cases, the convention adopted is id-&lt;signature algorithm&gt;-&lt;categoryXY&gt;[-&lt;hash function&gt;] where X and Y are the lower and higher categories. </t>
+   
+   		    <section anchor="crystals-dilithium" title="CRYSTALS-Dilithium Signature">
+			<t> CRYSTALS-Dilithium is a digital signature whose security is based on the hardness of lattice problems <xref target="CRYSTALS-Dilithium"/>. 
+			It provides four parameter sets for the security categories 1, 2, 3 and 4, and offers a comparative small footprint for the combination public key + signature size, which ranges from about 2-5 KiB. 
+			All operations (KeyGen, Sign and Verify) are relatively efficient to compute (hundreds of Kcycles using AVX2).
+			CRYSTALS-Dilithium SHALL be used in conjunction with SHAKE-256 for all security categories above.</t>
+
+			<t>
+			   When SHAKE-256 is used, the OIDs are: </t>
+
+			  <t> id-dilithium-category1-shake256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-dilithium-category1-shake(3) 20 }. </t>
+			<t>
+			   id-dilithium-category2-shake256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-dilithium-category2-shake(3) 21 }.</t>
+			<t>
+			   id-dilithium-category3-shake256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-dilithium-category3-shake(3) 22 }. </t>
+			<t>
+			   id-dilithium-category4-shake256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-dilithium-category4-shake(3) 23 }. </t>			       
+			<t>
+			   When the id-dilithium-category1-shake256, id-dilithium-category2-shake256, id-dilithium-category3-shake256 or id-dilithium-category4-shake256 algorithm
+			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, the OID id-dilithium-category1-shake256,
+			   id-dilithium-category2-shake256, id-dilithium-category3-shake256 or id-dilithium-category4-shake256. </t>
+		    </section>
+
+		    <section anchor="FALCON" title="FALCON Signature">
+			<t> FALCON is a digital signature whose security is based on the hardness of lattice problems <xref target="FALCON-ref"/>. 
+				It provides two parameter sets for security categories 1 and 4-5 and also offers relatively small footprints for the public key + signature size metric, which ranges from about 1.5-3.0 KiB.
+				In terms of computational efficiency, KeyGen is relatively slow (tens of Mcycles), Sign is moderate (hundreds of Kcycles) and Verify is relatively fast (hundreds of Kcycles).
+				FALCON SHALL be used in conjunction with SHAKE-256 for all security categories above.</t>
+
+			<t>
+			   When SHAKE-256 is used, the OIDs are: </t>
+
+			<t> id-falcon-category1-shake256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-falcon-category1-shake(3) 24 }. </t>
+			<t>
+			   id-falcon-category45-shake256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-falcon-category45-shake(3) 25 }. </t>
+			<t>
+			   When the id-falcon-category1-shake256 or id-falcon-category45-shake256 algorithm
+			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, the OID id-falcon-category1-shake256,
+			   or id-falcon-category45-shake256.</t>
+		    </section>	
+		    
+		    <section anchor="GeMSS" title="GeMSS Signature">
+			<t> GeMSS is a digital signature whose security is based on the hardness of solving non-linear system of multivariate equations over finite fields <xref target="GeMSS-ref"/>.  
+			It provides nine parameter sets, three for each one of the security categories 1, 3 and 5. For each category, GeMSS uses a name convention to distinguish between the three parameter sets, i.e., GeMSS, BlueGeMSS and RedGeMSS. 
+			In terms of space, public-keys are relatively large (about 400 KiB - 3 MiB) but signatures are very small (about 33-75 B).
+			In terms of computational efficiency, KeyGen is relatively slow (hundreds of Mcycles), Sign is moderate (few million cycles) and Verify is relatively fast (hundreds of Kcycles).
+			GeMSS SHALL be used in conjunction with a SHA3 hash function with output sizes of 256, 384 and 512 bits for matching the three security categories above, respectively.</t>
+
+			<t>
+			   When SHA3 is used, the OIDs are: </t>
+
+			<t> id-gemss-category1-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category1-sha3(3) 26 }. </t>
+			<t> id-gemssblue-category1-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category1-sha3(3) 27 }. </t>	
+			<t> id-gemssred-category1-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category1-sha3(3) 28 }. </t>	
+
+			<t>
+			   id-gemss-category3-sha3-384 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category3-sha3(3) 29 }.</t>
+			<t>
+			   id-gemssblue-category3-sha3-384 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category3-sha3(3) 30 }.</t>
+			<t>       
+			   id-gemssred-category3-sha3-384 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category3-sha3(3) 31 }.</t>			       
+
+			<t>
+			   id-gemss-category5-sha3-512 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category5-sha3(3) 32 }. </t>
+			<t>
+			   id-gemssblue-category5-sha3-512 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category5-sha3(3) 33 }. </t>
+			<t>
+			   id-gemssred-category5-sha3-512 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-gemss-category5-sha3(3) 34 }. </t>			       
+
+			<t>
+			   When the id-gemss[color]-category1-sha3-256, id-gemss[color]-category3-sha3-384 or id-gemss[color]-category5-sha3-512 algorithm
+			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, the OID id-gemss[color]-category1-sha3-256,
+			   id-gemss[color]-category3-sha3-384, or id-gemss[color]-category5-sha3-512.</t>
+		    </section>		
+
+		    <section anchor="luov" title="LUOV Signature">
+			<t> The LUOV is a digital signature whose security is based on the hardness of solving non-linear system of multivariate equations over finite fields <xref target="LUOV"/>. 
+				It provides 6 parameter sets, two for each one of the security categories 2, 4 and 5. In order to differentiate parameter sets within the same security category, 
+				LUOV uses the name convention LUOV-r-m-v, where r, m, and v are integers indicating the extension degree, number of equations and number of vinegar variables, respectively.
+				Note that it is likely that r, m and v may slightly change over time as cryptanalysis evolve and fixing specific numbers is likely to make this specification obsolete in a near future. Therefore we use the name convention
+				LUOV and LUOV-high, where LUOV simply means the smaller extension degree r (between the two possible parameter sets) and LUOVhigher means the larger extension degree r.
+				In terms of space, LUOV public keys have moderate size (12-75 KiB) and signatures are small (300-4400 B).
+				In terms of computational efficiency, KeyGey, Sign and Verify have moderate speed (a few Mcycles, hundreds of Kcycles and hundreds of Kcycles, respectively).
+				LUOV SHALL be used in conjunction with SHAKE-128 for matching category 2 or SHAKE-256 for categories 4 and 5.</t>
+
+			<t>
+			   When SHAKE is used, the OIDs are: </t>
+
+			<t> id-luov-category2-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-luov-category2-shake(3) 35 }. </t>
+			<t> id-luovhigher-category2-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-luov-category2-shake(3) 36 }. </t>
+
+			<t>
+			   	id-luov-category4-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-luov-category4-shake(3) 37 }.</t>
+			<t>
+			   	id-luovhigher-category4-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-luov-category4-shake(3) 38 }.</t>
+
+			<t>
+			   id-luov-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-luov-category5-shake(3) 39 }. </t>
+			<t>
+			   id-luovhigher-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-luov-category5-shake(3) 40 }. </t>
+
+			<t>
+			   When the id-luov[-higher]-category2-shake-128, id-luov[-higher]-category4-shake-256 or id-luov[-higher]-category5-shake-256 algorithm
+			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
+			   the OID id-luov[-higher]-category2-shake-128, id-luov[-higher]-category4-shake-256 or id-luov[-higher]-category5-shake-256.</t>
+		    </section>			
+
+		    <section anchor="mqdss" title="MQDSS Signature">
+			<t> The MQDSS is a digital signature whose security is based on the hardness of solving non-linear system of multivariate equations over finite fields <xref target="MQDSS"/>.  
+				It provides two parameter sets, one for security category 1-2 (in between) and another for category 3-4.
+				In terms of space, public keys are small (46-64 B) and signatures are moderate (about 2.6-5.5 KB).
+				From a computational efficiency point of view, KeyGen, Sign and Verify have moderate speed (few million cycles).
+				MQDSS SHALL be used in conjunction with SHAKE-256 for matching the security categories above.</t>
+
+			<t>
+			   When SHAKE is used, the OIDs are: </t>
+
+			  <t> id-mqdss-category12-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-mqdss-category12-shake(3) 41 }. </t>
+			<t>
+			   id-mqdss-category34-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-mqdss-category34-shake(3) 42 }.</t>
+			<t>
+			   When the id-mqdss-category12-shake-256 or id-mqdss-category34-shake-256 algorithm
+			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
+			   the OID id-mqdss-category12-shake-256 or id-mqdss-category34-shake-256.</t>
+		    </section>				    	    
+			
+			<section anchor="picnic-signatures" title="PICNIC Signature">
+			<t> The PICNIC is a digital signature whose security is based on the hardness of breaking symmetric primitives like block ciphers and hash functions <xref target="PICNIC"/>. 
+				It provides nine parameter sets, three for each one of the security categories 1, 3 and 5. For each category, PICNIC uses a name convention to distinguish between the three parameter sets, i.e., picnic-L&lt;X&gt;-FS, picnic-L&lt;X&gt;-UR and picnic2-L&lt;X&gt;-FS, where &lt;X&gt; specifies the category. 
+				In terms of space, PICNIC public keys are small (32-64 B) and signatures have moderate sizes (1.7-26.2 KiB).
+				From a computational efficiency point of view, KeyGen is fast (tens of Kcycles), Sign and Verify have moderate speed (a few up to hundreds of Mcycles).
+				PICNIC SHALL be used in conjunction with SHAKE-128 for matching category 1 or SHAKE-256 for categories 3 and 5.</t>
+
+			<t>
+			   When SHAKE is used, the OIDs are: </t>
+
+			<t> id-picnicl1fs-category1-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category1-shake(3) 43 }. </t>
+			<t> id-picnicl1ur-category1-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category1-shake(3) 44 }. </t>
+			<t> id-picnic2l1fs-category1-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category1-shake(3) 45 }. </t>			       
+
+			<t>
+			   id-picnicl1fs-category3-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category3-shake(3) 46 }.</t>
+			<t>
+			   id-picnicl1ur-category3-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category3-shake(3) 47 }.</t>
+			<t>
+			   id-picnic2l1fs-category3-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category3-shake(3) 48 }.</t>			       
+
+			<t>
+			   id-picnicl1fs-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category5-shake(3) 49 }. </t>
+			<t>
+			   id-picnicl1ur-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category5-shake(3) 50 }. </t>
+			<t>
+			   id-picnic2l1fs-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-picnic-category5-shake(3) 51 }. </t>
+			       			       			       
+			<t>
+			   When the id-&lt;picnic name&gt;-category1-shake-128, id-&lt;picnic name&gt;-category3-shake-256 or id-&lt;picnic name&gt;-category5-shake-256 algorithm
+			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
+			   the OID id-&lt;picnic name&gt;-category1-shake-128, id-&lt;picnic name&gt;-category3-shake-256 or id-&lt;picnic name&gt;-category5-shake-256.</t>
+			</section>
+
+		    <section anchor="qtesla-signatures" title="qTesla Signatures">
+			<t> The qTesla is a digital signature whose security is based on the hardness of lattice problems <xref target="qTesla"/>. 
+				qTesla features two types of design with respect to security, i.e., provable and heuristic security. 
+				For the provably-secure versions, two parameter sets are provided for categories 1 and 3.
+				For the heuristic design, 10 parameter sets are given targeting security categories 1, 2, 3 and 5. Half of the heuristic parameters are intended for compressed public keys. 
+				After round 2 submission to NIST, all the compressed parameters were broken and acknowledged by the authors. 
+				Therefore, the compressed parameter sets are omitted in this document, and thus the remaining 5 heuristic plus the two provably-secure are presented.
+				The heuristic versions of qTesla adopt the name convention qTesla-&lt;X&gt;[-size] where &lt;X&gt; is a Roman numeral for the category and -size means optimized for size.
+				The provably-secure versions adopt the convention qTesla-p-&lt;X&gt;.
+				qTesla SHALL be used in conjunction with SHAKE-128 for matching category 1 or SHAKE-256 for matching categories 2, 3 and 5. </t>
+
+			<t>
+			   When SHAKE is used, the OIDs are: </t>
+
+			<t> id-qteslai-category1-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category1-shake(3) 52 }. </t>
+			<t> id-qteslais-category1-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category1-shake(3) 53 }. </t>
+			<t> id-qteslapi-category1-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category1-shake(3) 54 }. </t>
+
+			<t> id-qteslai-category2-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category2-shake(3) 55 }. </t>
+			<t> id-qteslais-category2-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category2-shake(3) 56 }. </t>
+
+			<t> id-qteslai-category3-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category3-shake(3) 57 }. </t>
+			<t> id-qteslais-category3-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category3-shake(3) 58 }. </t>
+			<t> id-qteslapi-category3-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category3-shake(3) 59 }. </t>
+
+			<t> id-qteslai-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category5-shake(3) 60 }. </t>
+			<t> id-qteslais-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-qtesla-category5-shake(3) 61 }. </t>
+
+			<t>
+			   When the id-&lt;qtesla name&gt;-category1-shake-128, id-&lt;qtesla name&gt;-category2-shake-256, id-&lt;qtesla name&gt;-category3-shake-256 or id-&lt;qtesla name&gt;-category5-shake-256 algorithm
+			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
+			   the OID id-&lt;qtesla name&gt;-category1-shake-128, id-&lt;qtesla name&gt;-category2-shake-256, id-&lt;qtesla name&gt;-category3-shake-256 or id-&lt;qtesla name&gt;-category5-shake-256.</t>
+		    </section>			
+
+		    <section anchor="rainbow-signatures" title="Rainbow Signatures">
+			<t> The Rainbow is a digital signature whose security is based on the hardness of solving non-linear system of multivariate equations over finite fields <xref target="RAINBOW"/>. 
+				It provides 6 parameter sets, two for each one of the security categories 1, 3 and 5. Half of the parameter sets is intended for a compressed key variant of Rainbow.
+				The following name convention for distinguishing between compressed and non-compressed variants is adopted: id-rainbow[-compressed]-category&lt;X&gt;-&lt;hash function&gt;
+				In terms of space, Rainbow public keys are moderate to large (58-492 KiB for the compressed versions) and signatures are small (64-204 B). 
+				From a computational efficiency point of view, KeyGen has moderate speed (tens of Mcyles), Sign and Verify are fast (hundreds of Kcycles).
+				Rainbow SHALL be used in conjunction with SHA3-256, SHA3-384 and SHA3-512 for matching categories 1, 3 and 5, respectively.</t>
+
+			<t>
+			   When SHA3 is used, the OIDs are: </t>
+
+			<t> id-rainbow-category1-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-rainbow-category1(3) 62 }. </t>
+			<t>
+			   id-rainbow-category3-sha3-384 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-rainbow-category3(3) 63 }.</t>
+			<t>
+			   id-rainbow-category5-sha3-512 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-rainbow-category5(3) 64 }. </t>
+			<t>
+			   When the id-rainbow-category1-sha3-256, id-rainbow-category3-sha3-384 or id-rainbow-category5-sha3-512 algorithm
+			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
+			   the OID id-rainbow-category1-sha3-256, id-rainbow-category3-sha3-384 or id-rainbow-category5-sha3-512.</t>
+		    </section>			       	    
+
+		    <section anchor="sphincs-signatures" title="SPHINCS+ Signature">
+			<t> SPHINCS+ is a digital signature whose security is based on problems from hash functions <xref target="SPHINCS-PLUS"/>. 
+				It provides a reasonable amount of parameter sets per security category covering categories 1, 3 and 5. 
+				It adopts the name convention SPHINCS+-&lt;W&gt;-&lt;X&gt;-&lt;Y&gt;-&lt;Z&gt; where W is the underlying hash function, X can be one of the integers 128, 192 or 256 indicating the hash output size and thus the security category, Y can be either s (size-optimized implementation) or f (fast implementation) and Z can be either simple (no bitmasks used in the underlying hash) or robust (bitmasks included).
+				In terms of space, SPHINCS+ public keys are small (32-64 B) and signatures have moderate sizes (8-50 KiB).
+				From a computational efficiency point of view, KeyGen, Sign and Verify have moderate to slow speed (ranging from a few to hundreds of Mcycles).
+				This document considers only instances based on the NIST standardized hash functions <xref target="FIPS202"/>, i.e., SHAKE and SHA3. </t>
+
+			<t>
+			   When SHAKE or SHA3 is used, the OIDs are: </t>
+
+			<t> id-sphincsp128ssimple-category1-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category1-shake(3) 65 }. </t>
+			<t> id-sphincsp128srobust-category1-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category1-shake(3) 66 }. </t>			       
+			<t> id-sphincsp128fsimple-category1-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category1-sha3(3) 67 }. </t>	
+			<t> id-sphincsp128frobust-category1-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category1-sha3(3) 68 }. </t>				       		       
+				       
+
+			<t> id-sphincsp192ssimple-category3-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category3-shake(3) 69 }. </t>
+			<t> id-sphincsp192srobust-category3-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category3-shake(3) 70 }. </t>			       
+			<t> id-sphincsp192fsimple-category3-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category3-sha3(3) 71 }. </t>	
+			<t> id-sphincsp192frobust-category3-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category3-sha3(3) 72 }. </t>
+
+			
+			<t> id-sphincsp256ssimple-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category5-shake(3) 73 }. </t>
+			<t> id-sphincsp256srobust-category5-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category5-shake(3) 74 }. </t>			       
+			<t> id-sphincsp256fsimple-category5-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category5-sha3(3) 75 }. </t>	
+			<t> id-sphincsp256frobust-category5-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
+			       country(16) us(840) organization(1) gov(101) csor(3)
+			       algorithms(4) id-sphincsp-category5-sha3(3) 76 }. </t>		
+			
+			<t>
+			   When the id-sphincsp-&lt;X&gt;-&lt;Y&gt;-&lt;Z&gt;-category1-&lt;hash function&gt;, id-sphincsp-category3-&lt;hash function&gt; or id-sphincsp-category5-&lt;hash function&gt; 
+			   algorithm identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
+			   the OID id-sphincsp-&lt;X&gt;-&lt;Y&gt;-&lt;Z&gt;-category1-&lt;hash function&gt;, id-sphincsp-category3-&lt;hash function&gt; or id-sphincsp-category5-&lt;hash function&gt;.</t>
+		    </section>			       	    		    		   
+
+ 		</section>
+
+ 	</middle> 	
+ 	<back>
+ 		<references>
+
+			<reference anchor="NIST-PQ" target="https://www.nist.gov/pqcrypto">
+			  <front>
+			    <title>Post-Quantum Cryptography</title>
+			    <author >
+			      <organization>National Institute of Standards and Technology (NIST)</organization>
+			    </author>
+			    <date year="2019"/>
+			  </front>
+			</reference>	
+
+			<reference anchor="NIST-OIDS" target="https://csrc.nist.gov/Projects/Computer-Security-Objects-Register/Algorithm-Registration">
+			  <front>
+			    <title>Computer Security Objects Register</title>
+			    <author>
+			      <organization>National Institute of Standards and Technology (NIST)</organization>
+			    </author>
+			    <date year="2019"/>
+			  </front>
+			</reference>
+
+			<reference anchor="FIPS202" target="http://dx.doi.org/10.6028/NIST.FIPS.202">
+				 <front>
+				 	<title>SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions</title>
+				    <author>
+				      <organization>National Institute of Standards and Technology (NIST)</organization>
+				    </author>				 	
+				 	<date year="2015" month="August"/>
+				 </front>			
+			</reference>
+
+
+			<reference  anchor="PQ-X.509" target='https://www.rfc-editor.org/info/rfcXYZ'>
+				<front>
+					<title>To be specified</title>
+					<author initials='G.C.' surname='C. F. Pereira' fullname='G. C. C. F. Pereira'><organization /></author>
+					<author initials='B.' surname='Neill' fullname='B. Neill'><organization /></author>
+					<date year='' month='' />
+				</front>
+				<seriesInfo name='RFC' value='XYZ'/>
+			</reference>
+
+			<reference  anchor="RFC2119" target='https://www.rfc-editor.org/info/rfc2119'>
+				<front>
+					<title>Key words for use in RFCs to Indicate Requirement Levels</title>
+					<author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
+					<date year='1997' month='March' />
+				</front>
+				<seriesInfo name='RFC' value='2119'/>
+			</reference>
+
+
+			<reference  anchor="RFC3279" target='https://www.rfc-editor.org/info/rfc3279'>
+				<front>
+					<title>Algorithms and Identifiers for the Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile</title>
+					<author initials='L.' surname='Bassham' fullname='L. Bassham'><organization /></author>
+					<author initials='W.' surname='Polk' fullname='W. Polk'><organization /></author>
+					<author initials='R.' surname='Housley' fullname='R. Housley'><organization /></author>
+					<date year='2002' month='April' />
+				</front>
+				<seriesInfo name='RFC' value='3279'/>
+			</reference>	
+
+			<reference  anchor="RFC5758" target='https://www.rfc-editor.org/info/rfc5758'>
+				<front>
+					<title>Internet X.509 Public Key Infrastructure: Additional Algorithms and Identifiers for DSA and ECDSA</title>
+					<author initials='Q.' surname='Dang' fullname='Q. Dang'><organization /></author>
+					<author initials='S.' surname='Santesson' fullname='S. Santesson'><organization /></author>
+					<author initials='K.' surname='Moriarty' fullname='K. Moriarty'><organization /></author>
+					<author initials='D.' surname='Brown' fullname='D. Brown'><organization /></author>
+					<author initials='T.' surname='Polk' fullname='T. Polk'><organization /></author>
+					<date year='2010' month='January' />
+				</front>
+				<seriesInfo name='RFC' value='5758'/>
+			</reference>										
+
+			<reference  anchor="RFC5280" target='https://www.rfc-editor.org/info/rfc5280'>
+				<front>
+					<title>Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile</title>
+					<author initials='D.' surname='Cooper' fullname='D. Cooper'><organization /></author>
+					<author initials='S.' surname='Santesson' fullname='S. Santesson'><organization /></author>
+					<author initials='S.' surname='Farrell' fullname='S. Farrell'><organization /></author>
+					<author initials='S.' surname='Boeyen' fullname='S. Boeyen'><organization /></author>
+					<author initials='R.' surname='Housley' fullname='R. Housley'><organization /></author>
+					<author initials='W.' surname='Polk' fullname='W. Polk'><organization /></author>
+					<date year='2008' month='May' />
+					<abstract><t>This memo profiles the X.509 v3 certificate and X.509 v2 certificate
+								   revocation list (CRL) for use in the Internet.  An overview of this
+								   approach and model is provided as an introduction.  The X.509 v3
+								   certificate format is described in detail, with additional
+								   information regarding the format and semantics of Internet name
+								   forms.  Standard certificate extensions are described and two
+								   Internet-specific extensions are defined.  A set of required
+								   certificate extensions is specified.  The X.509 v2 CRL format is
+								   described in detail along with standard and Internet-specific
+								   extensions.  An algorithm for X.509 certification path validation is
+								   described.  An ASN.1 module and examples are provided in the
+								   appendices..</t>
+					</abstract>
+				</front>
+				<seriesInfo name='RFC' value='5280'/>
+				<seriesInfo name='DOI' value='10.17487/RFC5280'/>
+			</reference>			
+
+			<reference anchor="PICNIC" >
+			  <front>
+			    <title>Post-quantum zero-knowledge and signatures from symmetric-key primitives</title>
+			    <author initials="M." surname="Chase" fullname="Melissa Chase">
+			      <organization></organization>
+			    </author>
+			    <author initials="D." surname="Derler" fullname="David Derler">
+			      <organization></organization>
+			    </author>
+			    <author initials="S." surname="Goldfeder" fullname="Steven Goldfeder"></author>
+			    <author initials="C." surname="Orlandi" fullname="Claudio Orlandi"></author>
+			    <author initials="S." surname="Ramacher" fullname="Sebastian Ramacher"></author>
+			    <author initials="C." surname="Rechberger" fullname="Christian Rechberger"></author>
+			    <author initials="D." surname="Slamanig" fullname="Daniel Slamanig">		</author>
+			    <author initials="G." surname="Zaverucha" fullname="Greg Zaverucha">	</author>	
+			    <date year="2017"/>
+			  </front>
+			  <seriesInfo name="ACM SIGSAC Conference on Computer and Communications Security" value="pp. 1825--1842"/>
+			  <seriesInfo name="DOI" value="10.1145/3133956.3133997"/>
+			</reference>	
+
+			<reference anchor="qTesla" target="https://eprint.iacr.org/2019/085">
+			  <front>
+			    <title>The Lattice-Based Digital Signature Scheme qTESLA</title>
+			    <author initials="E." surname="Alkim" fullname="Erdem Alkim"></author>
+			    <author initials="P.S." surname="L.M. Barreto" fullname="Paulo S.L.M. Barreto"></author>
+			    <author initials="N." surname="Bindel" fullname="Nina Bindel"></author>
+			    <author initials="P." surname="Longa" fullname="Patrick Longa"></author>
+			    <author initials="J." surname="E. Ricardini" fullname="Jefferson E. Ricardini"></author>
+			    <date year="2019"/>
+			  </front>
+			  <seriesInfo name="IACR Cryptology ePrint Archive" value=""/>
+			</reference>	
+
+			<reference anchor="CRYSTALS-Dilithium" target="https://eprint.iacr.org/2017/633">
+			  <front>
+			    <title>Crystals-dilithium: A lattice-based digital signature scheme</title>
+			    <author initials="L." surname="Ducas" fullname="Leo Ducas"></author>
+			    <author initials="E." surname="Kiltz" fullname="Eike Kiltz"></author>
+			    <author initials="T." surname="Lepoint" fullname="Tancrede Lepoint"></author>
+			    <author initials="V." surname="Lyubashevsky" fullname="Vadim Lyubashevsky"></author>
+			    <author initials="P." surname="Schwabe" fullname="Peter Schwabe"></author>
+			    <author initials="G." surname="Seiler" fullname="Gregor Seiler"></author>
+			    <author initials="D." surname="Stehle" fullname="Damien Stehle"></author>			    
+			    <date year="2017"/>
+			  </front>
+			  <seriesInfo name="IACR Cryptology ePrint Archive" value=""/>
+			</reference>
+
+			<reference anchor="MQDSS" target="https://eprint.iacr.org/2016/708">
+			  <front>
+			    <title>From 5-pass MQ-based identification to MQ-based signatures</title>
+			    <author initials="A." surname="Hulsing" fullname="Andreas Hulsing"></author>
+			    <author initials="J." surname="Rijneveld" fullname="Joost Rijneveld"></author>
+			    <author initials="S." surname="Samardjiska" fullname="S. Samardjiska"></author>
+			    <author initials="P." surname="Schwabe" fullname="P. Schwabe"></author>		    
+			    <date year="2016"/>
+			  </front>
+			  <seriesInfo name="IACR Cryptology ePrint Archive" value=""/>
+			</reference>			
+
+			<reference anchor="FALCON-ref" target="https://falcon-sign.info/">
+			  <front>
+			    <title>Falcon: Fast-Fourier lattice-based compact signatures over NTRU</title>
+			    <author initials="P-A." surname="Fouque" fullname="Pierre-Alain Fouque"></author>
+			    <author initials="J." surname="Hoffstein" fullname="Jeffrey Hoffstein"></author>
+			    <author initials="P." surname="Kirchner" fullname="P. Kirchner"></author>
+			    <author initials="V." surname="Lyubashevsky" fullname="V. Lyubashevsky"></author>		    
+			    <author initials="T." surname="Pornin" fullname="T. Pornin"></author>		   
+				<author initials="T." surname="Prest" fullname="T. Prest"></author>		
+				<author initials="T." surname="Ricosset" fullname="T. Ricosset"></author>		
+				<author initials="G." surname="Seiler" fullname="Gregor Seiler"></author>
+				<author initials="W." surname="Whyte" fullname="William Whyte"></author>
+				<author initials="Z." surname="Zhang" fullname="Zhenfei Zhang"></author>			     
+			    <date year="2018"/>
+			  </front>
+			  <seriesInfo name="IACR Cryptology ePrint Archive" value=""/>
+			</reference>			
+
+			<reference anchor="GeMSS-ref" target="https://www-polsys.lip6.fr/Links/NIST/GeMSS.html">
+			  <front>
+			    <title>GeMSS: A Great Multivariate Short Signature</title>
+			    <author initials="A." surname="Casanova" fullname="A. Casanova"></author>
+			    <author initials="J-C." surname="Faugere" fullname="J-C. Faugere"></author>
+			    <author initials="G." surname="Macario-Rat" fullname="G. Macario-Rat"></author>
+			    <author initials="J." surname="Patarin" fullname="J. Patarin"></author>		   
+			    <author initials="L." surname="Perret" fullname="L. Perret"></author>		   
+			    <author initials="J." surname="Ryckeghem" fullname="J. Ryckeghem"></author>		   			     
+			    <date year="2017"/>
+			  </front>
+			</reference>				
+
+			<reference anchor="LUOV" target="https://eprint.iacr.org/2017/776">
+			  <front>
+			    <title>LUOV: Field lifting for smaller UOV public keys</title>
+			    <author initials="W." surname="Beullens" fullname="W. Beullens"></author>
+			    <author initials="B." surname="Preneel" fullname="B. Preneel"></author>
+			    <date year="2017"/>
+			  </front>
+			  <seriesInfo name="IACR Cryptology ePrint Archive" value=""/>			  
+			</reference>				
+
+			<reference anchor="RAINBOW" target="https://link.springer.com/chapter/10.1007/11496137_12">
+			  <front>
+			    <title>Rainbow, a New Multivariable Polynomial Signature Scheme</title>
+			    <author initials="J." surname="Ding" fullname="J. Ding"></author>
+			    <author initials="D." surname="Schmidt" fullname="D. Schmidt"></author>
+			    <date year="2005"/>
+			  </front>		  
+			</reference>	
+
+			<reference anchor="SPHINCS-PLUS" target="https://sphincs.org/">
+			  <front>
+			    <title>SPHINCS+</title>
+			    <author initials="D.J." surname="Bernstein" fullname="D.J. Bernstein"></author>
+			    <author initials="C." surname="Dobraunig" fullname="C. Dobraunig"></author>
+			    <author initials="M." surname="Eichlseder" fullname="M. Eichlseder"></author>
+			    <author initials="S." surname="Fluhrer" fullname="S. Fluhrer"></author>
+			    <author initials="S-L." surname="Gazdag" fullname="S-L. Gazdag"></author>
+			    <author initials="A." surname="Hulsing" fullname="A. Hulsing"></author>
+			    <author initials="P." surname="Kampanakis" fullname="P. Kampanakis"></author>
+			    <author initials="S." surname="Kolbl" fullname="S. Kolbl"></author>
+			    <author initials="T." surname="Lange" fullname="T. Lange"></author>
+			    <author initials="M." surname="Lauridsen" fullname="M. Lauridsen"></author>
+			    <author initials="F." surname="Mendel" fullname="F. Mendel"></author>
+			    <author initials="R." surname="Niederhagen" fullname="R. Niederhagen"></author>
+			    <author initials="C." surname="Rechberger" fullname="C. Rechberger"></author>		
+				<author initials="J." surname="Rijneveld" fullname="J. Rijneveld"></author>	
+				<author initials="P." surname="Schwabe" fullname="P. Schwabe"></author>				    	    			    			    			    
+			    <date year="2017"/>
+			  </front>		  
+			</reference>				
+
+ 		</references>
+ 	</back>
+ </rfc>
