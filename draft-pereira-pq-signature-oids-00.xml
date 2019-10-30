@@ -11,9 +11,9 @@
 <?rfc sortrefs="yes"?>
 <?rfc symrefs="yes"?>
 
- <rfc number="0000" ipr="trust200902" category="std" updates="3279" docName="draft-pereira-pq-signatures-00">
+ <rfc ipr="trust200902" category="info" updates="3279" docName="draft-pereira-pq-signature-oids-00">
  	<front>
-		<title abbrev="pereira-certificate-stack">Internet X.509 Public Key Infrastructure: Additional Post-Quantum Signature Algorithms</title>
+		<title abbrev="pereira-pq-signature-oids">Internet X.509 Public Key Infrastructure: Additional Post-Quantum Signature Algorithms and Identifiers</title>
 
 		<author initials="G.C." surname="C. F. Pereira" fullname="Geovandro C. C. F. Pereira">
 			<organization abbrev="evolutionQ Inc. / IQC, UWaterloo"> evolutionQ Inc. / IQC, University of Waterloo </organization>
@@ -22,16 +22,17 @@
 			</address>		 
 		</author>
 
-		<date year="2019" month="October" day="11"/>
+		<date year="2019" month="October" day="29"/>
 		 
 		<!-- <area>General</area>
 		 	 Probable AREAS:
 		 	'LAMPS': Limited Additional Mechanisms for PKIX and SMIME (working group) https://tools.ietf.org/wg/lamps, e.g. https://tools.ietf.org/html/draft-truskovsky-lamps-pq-hybrid-x509-01 
 		 	'Network Working Group', e.g. https://tools.ietf.org/html/draft-stebila-tls-hybrid-design-00 --> 
-
-		 <keyword>Internet-Draft</keyword>
+		 
+		 <keyword>I-D</keyword>
+		 <keyword>INTERNET-DRAFT</keyword>
 		 <abstract>
-			<t> This document updates <xref target="RFC3279"/> by specifying additional algorithm identifiers and ASN.1 encoding rules for the nine selected post-quantum digital signature algorithms in the second round of NIST standardization process <xref target="NIST-PQ"/> when using SHA3 or SHAKE as the underlying hashing algorithms. This specification applies (but it is not limited to) to the Internet X.509 Public Key infrastructure (PKI) <xref target="RFC5280"/> and its post-quantum counterpart, when post-quantum digital signatures are used to sign certificates and certificate revocation lists (CRLs). <!-- <xref target="PQ-X.509"/> -->
+			<t> This document updates RFC 3279 by specifying additional algorithm identifiers and ASN.1 encoding rules for the nine selected post-quantum digital signature algorithms running in the second round of NIST standardization process when using SHA3 or SHAKE as the underlying hashing algorithms. This specification applies (but it is not limited to) to the Internet X.509 Public Key infrastructure (PKI) and its post-quantum counterpart (not yet standardized), when post-quantum digital signatures are used to sign certificates and certificate revocation lists (CRLs). <!-- <xref target="PQ-X.509"/> -->
 			</t>
 
 
@@ -41,15 +42,15 @@
  		<section anchor="introduction" title="Introduction"> 
  			<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <xref target="RFC2119"/>.</t>
  			
-			<t> This document profiles material under standardization by the NIST Post-Quantum Cryptography standardization process <xref target="NIST-PQ"/>. In particular, it provides the definition of algorithm identifiers and ASN.1 encoding formats for post-quantum digital signatures and subject public keys used in the post-quantum setting of the Internet X.509 Public Key Infrastructure (PKI) <xref target="RFC5280"/>. The nine digital signature algorithm candidates in the second round of the NIST process are considered along with their multiple security categories. Although not all nine algorithms may become actual standards, this specification will certainly cover the standardized ones.</t>
+			<t> This document profiles material under standardization by the NIST Post-Quantum Cryptography standardization process <xref target="NIST-PQ"/>. In particular, it provides the definition of algorithm identifiers and ASN.1 encoding formats for post-quantum digital signatures and subject public keys used in a post-quantum setting (not yet standardized) of the Internet X.509 Public Key Infrastructure (PKI) <xref target="RFC5280"/>. The nine digital signature algorithm candidates in the second round of the NIST process are considered along with their multiple security categories. Although not all nine algorithms may become actual standards, this specification will certainly cover the standardized ones.</t>
 
- 			<t> Precisely, this document defines additional contents for the "signatureAlgorithm", "signatureValue", and "signature" fields within Internet X.509 certificates and CRLs <xref target="RFC5280"/> when these objects are signed using pure post-quantum signature algorithms with SHA3 or SHAKE hash algorithms <xref target="FIPS202"/>. The SHA3 and SHAKE instances explicitly used in the object identifiers (OID) definitions are the ones adopted by the candidates in the second round of NIST.</t>
-			
+ 			<t> Precisely, this document defines additional contents for the "signatureAlgorithm", "signatureValue", "signature" and "subjectPublicKeyInfo" fields within Internet X.509 certificates and CRLs <xref target="RFC5280"/> when these objects are signed using pure post-quantum signature algorithms with SHA3 or SHAKE hash algorithms <xref target="FIPS202"/>. The SHA3 and SHAKE instances explicitly used in the object identifiers (OID) definitions are the ones adopted by the candidates in the second round of NIST.</t>
+			<t> This document does not identify (optional) parameters for each algorithm identifier. This is because the ongoing candidates are likely to change parameter sets in the coming years and this document rather focuses on high-level identifiers based on the security categories. The security categories are stable and are unlikely to be changed by NIST.</t>
 			<t> The OIDs provided are defined under the NIST signature algorithm branch in the OID tree <xref target="NIST-OIDS"/>, i.e.:</t> 
-			<t> joint-iso-itu-t -> country -> us -> organization -> gov -> csor -> nistAlgorithm -> sigAlgs. </t> 
-			<t>Note that the field sigAlgs already contains identifiers ranging from 1-16, allocated for (EC)DSA and RSA. This specification reserves identifiers starting from 20 and above for the new post-quantum signatures with their different parameter sets.</t>
+			<t> joint-iso-itu-t(2) &dash; country(16) &dash; us(840) &dash; organization(1) &dash; gov(101) &dash; csor(3) &dash; nistAlgorithm(4) &dash; sigAlgs(4). </t> 
+			<t> Note that the field sigAlgs already contains identifiers ranging from 1 to 16, allocated for (EC)DSA and RSA. In this specification identifiers starting from 20 and above are reserved for the post-quantum signatures with their different parameter sets.</t>
 
-			<t> This document extends <xref target="RFC3279"/>, in particular Sections 2.1, 2.2.2, and 2.2.3 and complements the update <xref target="RFC5758"/>, which focuses on the specification of OIDs for extra classical signature algorithms. </t> <!-- OIDs defined here are crucial for <xref target="PQ-X.509"/>, which extends <xref target="RFC5280"/> for accepting post-quantum X.509 certificates.</t> -->
+			<t> This document extends <xref target="RFC3279"/> that defines algorithm identifiers for classical signatures, and complements the update <xref target="RFC5758"/>, which focuses on the specification of OIDs for extra classical signatures. </t> <!-- OIDs defined here are crucial for <xref target="PQ-X.509"/>, which extends <xref target="RFC5280"/> for accepting post-quantum X.509 certificates.</t> -->
 
   		<section anchor="terminology" title="Terminology">
  			<t><list style="symbols">
@@ -66,17 +67,17 @@
 
  		</section>
  		<section anchor="hash-functions" title="Hash Functions">
-		<t> This section identifies hash functions for use with
-		   post-quantum digital signature algorithms in <xref target="PQ-X.509"/>. The hash functions SHA3-256, SHA3-384, SHA3-512 produce 256-bit, 384-bit and 512-bit outputs, respectively. On the other hand, functions SHAKE-128 and SHAKE-256 provide extendable (and thus variable) output sizes. They are all
+		<t> This section identifies hash functions for use with post-quantum digital signature algorithms. 
+			The hash functions SHA3-256, SHA3-384, SHA3-512 produce 256-bit, 384-bit and 512-bit outputs, respectively. On the other hand, functions SHAKE-128 and SHAKE-256 provide extendable (and thus variable) output sizes. They are all
 		   described in the "Secure Hash Standard" <xref target="FIPS202"/>. It is important to note that most of signature candidates in the NIST process adopt SHAKE which is the eXtendable-Output Function (XOF) of SHA3. The OIDs for SHAKE instances are retrieved from <xref target="NIST-OIDS"/>.
 		   
 		   The hash functions adopted by the NIST candidates have the following OIDs: </t>
 
 		  <t>
 		  id-sha3-256 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16)
-		                                      us(840) organization(1) gov(101)
-		                                      csor(3) nistAlgorithm(4)
-		                                      hashAlgs(2) 8 }</t>
+												us(840) organization(1) gov(101)
+												csor(3) nistAlgorithm(4)
+												hashAlgs(2) 8 }</t>
 		  <t>
 		  id-sha3-384 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16)
 		                                      us(840) organization(1) gov(101)
@@ -102,7 +103,7 @@
 		   When one of these OIDs appears in an AlgorithmIdentifier, all implementations MUST accept both NULL and absent parameters as legal and equivalent encodings.
 
 		   Conforming certification authority (CA) implementations SHOULD use SHA3-256, SHA3-384, SHA3-512, SHAKE-128 or SHAKE-256 when generating post-quantum certificates or
-		   CRLs according to <xref target="PQ-X.509"/>. </t>
+		   CRLs. </t>
 		</section>
 
  		<section anchor="pq-signatures" title="Post-quantum Digital Signature Algorithms">
@@ -170,11 +171,11 @@
 		    </section>	
 		    
 		    <section anchor="GeMSS" title="GeMSS Signature">
-			<t> GeMSS is a digital signature whose security is based on the hardness of solving non-linear system of multivariate equations over finite fields <xref target="GeMSS-ref"/>.  
-			It provides nine parameter sets, three for each one of the security categories 1, 3 and 5. For each category, GeMSS uses a name convention to distinguish between the three parameter sets, i.e., GeMSS, BlueGeMSS and RedGeMSS. 
+			<t> GeMSS is a digital signature whose security is based on the hardness of solving non-linear system of multivariate equations over finite fields <xref target="GeMSS-ref"/>. 
+			It provides nine parameter sets, three for each one of the security categories 1, 3 and 5. For each category, GeMSS uses a name convention to distinguish between the three parameter sets, i.e., GeMSS, BlueGeMSS and RedGeMSS.
 			In terms of space, public-keys are relatively large (about 400 KiB - 3 MiB) but signatures are very small (about 33-75 B).
 			In terms of computational efficiency, KeyGen is relatively slow (hundreds of Mcycles), Sign is moderate (few million cycles) and Verify is relatively fast (hundreds of Kcycles).
-			GeMSS SHALL be used in conjunction with a SHA3 hash function with output sizes of 256, 384 and 512 bits for matching the three security categories above, respectively.</t>
+			GeMSS SHALL be used in conjunction with a SHA3 hash function with output sizes of 256, 384 and 512 bits for matching the three security categories above, respectively. </t>
 
 			<t>
 			   When SHA3 is used, the OIDs are: </t>
@@ -226,8 +227,8 @@
 			<t> The LUOV is a digital signature whose security is based on the hardness of solving non-linear system of multivariate equations over finite fields <xref target="LUOV"/>. 
 				It provides 6 parameter sets, two for each one of the security categories 2, 4 and 5. In order to differentiate parameter sets within the same security category, 
 				LUOV uses the name convention LUOV-r-m-v, where r, m, and v are integers indicating the extension degree, number of equations and number of vinegar variables, respectively.
-				Note that it is likely that r, m and v may slightly change over time as cryptanalysis evolve and fixing specific numbers is likely to make this specification obsolete in a near future. Therefore we use the name convention
-				LUOV and LUOV-high, where LUOV simply means the smaller extension degree r (between the two possible parameter sets) and LUOVhigher means the larger extension degree r.
+				Note that it is likely that r, m and v may slightly change over time as cryptanalysis evolve and fixing specific numbers is likely to make this specification obsolete in a near future. 
+				Therefore we use the name convention LUOV and LUOV-high, where LUOV simply means the smaller extension degree r (between the two possible parameter sets) and LUOVhigher means the larger extension degree r.
 				In terms of space, LUOV public keys have moderate size (12-75 KiB) and signatures are small (300-4400 B).
 				In terms of computational efficiency, KeyGey, Sign and Verify have moderate speed (a few Mcycles, hundreds of Kcycles and hundreds of Kcycles, respectively).
 				LUOV SHALL be used in conjunction with SHAKE-128 for matching category 2 or SHAKE-256 for categories 4 and 5.</t>
@@ -261,10 +262,10 @@
 			       algorithms(4) id-luov-category5-shake(3) 40 }. </t>
 
 			<t>
-			   When the id-luov[-higher]-category2-shake-128, id-luov[-higher]-category4-shake-256 or id-luov[-higher]-category5-shake-256 algorithm
+			   When the id-luov[higher]-category2-shake-128, id-luov[higher]-category4-shake-256 or id-luov[higher]-category5-shake-256 algorithm
 			   identifier appears in the algorithm field as an AlgorithmIdentifier,
 			   the encoding SHALL omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
-			   the OID id-luov[-higher]-category2-shake-128, id-luov[-higher]-category4-shake-256 or id-luov[-higher]-category5-shake-256.</t>
+			   the OID id-luov[higher]-category2-shake-128, id-luov[higher]-category4-shake-256 or id-luov[higher]-category5-shake-256.</t>
 		    </section>			
 
 		    <section anchor="mqdss" title="MQDSS Signature">
@@ -351,7 +352,7 @@
 				For the heuristic design, 10 parameter sets are given targeting security categories 1, 2, 3 and 5. Half of the heuristic parameters are intended for compressed public keys. 
 				After round 2 submission to NIST, all the compressed parameters were broken and acknowledged by the authors. 
 				Therefore, the compressed parameter sets are omitted in this document, and thus the remaining 5 heuristic plus the two provably-secure are presented.
-				The heuristic versions of qTesla adopt the name convention qTesla-&lt;X&gt;[-size] where &lt;X&gt; is a Roman numeral for the category and -size means optimized for size.
+				The heuristic versions of qTesla adopt the name convention qTesla-&lt;X&gt;-[size] where &lt;X&gt; is a Roman numeral for the category and -size means optimized for size.
 				The provably-secure versions adopt the convention qTesla-p-&lt;X&gt;.
 				qTesla SHALL be used in conjunction with SHAKE-128 for matching category 1 or SHAKE-256 for matching categories 2, 3 and 5. </t>
 
@@ -402,7 +403,7 @@
 		    <section anchor="rainbow-signatures" title="Rainbow Signatures">
 			<t> The Rainbow is a digital signature whose security is based on the hardness of solving non-linear system of multivariate equations over finite fields <xref target="RAINBOW"/>. 
 				It provides 6 parameter sets, two for each one of the security categories 1, 3 and 5. Half of the parameter sets is intended for a compressed key variant of Rainbow.
-				The following name convention for distinguishing between compressed and non-compressed variants is adopted: id-rainbow[-compressed]-category&lt;X&gt;-&lt;hash function&gt;
+				The following name convention for distinguishing between compressed and non-compressed variants is adopted: id-rainbow-[compressed]-category&lt;X&gt;-&lt;hash function&gt;
 				In terms of space, Rainbow public keys are moderate to large (58-492 KiB for the compressed versions) and signatures are small (64-204 B). 
 				From a computational efficiency point of view, KeyGen has moderate speed (tens of Mcyles), Sign and Verify are fast (hundreds of Kcycles).
 				Rainbow SHALL be used in conjunction with SHA3-256, SHA3-384 and SHA3-512 for matching categories 1, 3 and 5, respectively.</t>
@@ -488,10 +489,16 @@
 		    </section>			       	    		    		   
 
  		</section>
+		<section anchor="security-considerations" title="Security Considerations">
+			<t>As mentioned in <xref target="introduction"/>, the object identifiers defined in this document take into account the security category + underlying 
+			hash function adopted in each post-quantum signature scheme, and does not introduce extra definitions for the (optional) parameters for each scheme.
+			This is because it is likely that some particular parameter sets get changed in the next couple years of standardization until about 2024. 
+			Defining the names in terms of security categories is deemed to be a suitable approach as NIST is unlikely to change the categories themselves. </t>
+		 </section> 		
 
  	</middle> 	
  	<back>
- 		<references>
+ 		<references title='Normative References'>
 
 			<reference anchor="NIST-PQ" target="https://www.nist.gov/pqcrypto">
 			  <front>
@@ -523,7 +530,7 @@
 				 </front>			
 			</reference>
 
-
+			<!--
 			<reference  anchor="PQ-X.509" target='https://www.rfc-editor.org/info/rfcXYZ'>
 				<front>
 					<title>To be specified</title>
@@ -532,7 +539,7 @@
 					<date year='' month='' />
 				</front>
 				<seriesInfo name='RFC' value='XYZ'/>
-			</reference>
+			</reference>-->
 
 			<reference  anchor="RFC2119" target='https://www.rfc-editor.org/info/rfc2119'>
 				<front>
@@ -594,8 +601,12 @@
 				</front>
 				<seriesInfo name='RFC' value='5280'/>
 				<seriesInfo name='DOI' value='10.17487/RFC5280'/>
-			</reference>			
+			</reference>						
 
+ 		</references>
+
+
+ 		<references title='Informative References'>
 			<reference anchor="PICNIC" >
 			  <front>
 			    <title>Post-quantum zero-knowledge and signatures from symmetric-key primitives</title>
@@ -727,8 +738,8 @@
 				<author initials="P." surname="Schwabe" fullname="P. Schwabe"></author>				    	    			    			    			    
 			    <date year="2017"/>
 			  </front>		  
-			</reference>				
+			</reference>	
+		</references>
 
- 		</references>
  	</back>
  </rfc>
