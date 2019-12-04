@@ -81,7 +81,7 @@ Table of Contents
      3.8.  Rainbow Signatures  . . . . . . . . . . . . . . . . . . .   9
      3.9.  SPHINCS+ Signature  . . . . . . . . . . . . . . . . . . .  10
    4.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
-   5.  Security Considerations . . . . . . . . . . . . . . . . . . .  10
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
    6.  Acknowledgement . . . . . . . . . . . . . . . . . . . . . . .  11
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  11
@@ -131,16 +131,22 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
    likely to change parameter sets in the coming years and this document
    rather focuses on high-level identifiers.
 
-   The OIDs provided are suggested to go under the NIST signature
-   algorithm arc in the OID tree [NIST-OIDS], i.e.:
+   The OIDs defined in this document are currently allocated under the
+   following evolutionQ arc in the OID tree:
+
+   iso(1) identified-organization(3) dod(6) internet(1) private(4)
+   enterprise(1) evolutionQ(54944) algorithms(1) sigAlgs(1)
+
+   Note that once the NIST algorithms are standardized by around 2024,
+   their natural arc to go in the OID tree [NIST-OIDS] is:
 
    joint-iso-itu-t(2) - country(16) - us(840) - organization(1) -
    gov(101) - csor(3) - nistAlgorithm(4) - sigAlgs(4).
 
-   Note that the field sigAlgs already contains identifiers ranging from
-   1 to 16, allocated for (EC)DSA and RSA.  In this specification
-   identifiers starting from 20 and above are reserved for the post-
-   quantum signatures with their different parameter sets.
+   If the NIST arc is to be adopted, note that the field sigAlgs already
+   contains identifiers ranging from 1 to 16, allocated for (EC)DSA and
+   RSA.  Thus identifiers starting from 20 and above can be reserved for
+   the post-quantum signatures with their different parameter sets.
 
    This document extends [RFC3279] that defines algorithm identifiers
    for classical signatures, and complements the update [RFC5758], which
@@ -156,12 +162,6 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
 
    o  MiB: Mibibytes
 
-   o  NIST: National Institute of Standards and Technology.
-
-   o  OID: Object Identifier
-
-   o  SHA3: Secure Hash Algorithm-3
-
 
 
 
@@ -169,6 +169,12 @@ C. F. Pereira             Expires May 23, 2020                  [Page 3]
 
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
+
+   o  NIST: National Institute of Standards and Technology.
+
+   o  OID: Object Identifier
+
+   o  SHA3: Secure Hash Algorithm-3
 
    o  XOF: eXtendable-Output hash Function
 
@@ -211,12 +217,6 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
    AlgorithmIdentifier, all implementations MUST accept both NULL and
    absent parameters as legal and equivalent encodings.  Conforming
    certification authority (CA) implementations SHOULD use SHA3-256,
-   SHA3-384, SHA3-512, SHAKE-128 or SHAKE-256 when generating post-
-   quantum certificates or CRLs.
-
-
-
-
 
 
 
@@ -225,6 +225,9 @@ C. F. Pereira             Expires May 23, 2020                  [Page 4]
 
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
+
+   SHA3-384, SHA3-512, SHAKE-128 or SHAKE-256 when generating post-
+   quantum certificates or CRLs.
 
 3.  Post-quantum Digital Signature Algorithms
 
@@ -252,9 +255,9 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
 
    When SHAKE-256 is used, the OIDs are:
 
-   id-dilithium-shake256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-dilithium-shake(3) 20 }.
+   id-dilithium-shake256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-dilithium-shake(1) 1 }.
 
    When the id-dilithium-shake256 identifier appears in the algorithm
    field as an AlgorithmIdentifier, the encoding MUST omit the
@@ -270,10 +273,7 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
    metric, which ranges from about 1.5-3.0 KiB.  In terms of
    computational efficiency, KeyGen is relatively slow (tens of
    Mcycles), Sign is moderate (hundreds of Kcycles) and Verify is
-   relatively fast (hundreds of Kcycles).  FALCON SHALL be used in
-   conjunction with SHAKE-256 for all security categories above.
 
-   When SHAKE-256 is used, the OIDs are:
 
 
 
@@ -282,9 +282,14 @@ C. F. Pereira             Expires May 23, 2020                  [Page 5]
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
 
-   id-falcon-shake256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-falcon-shake(3) 21 }.
+   relatively fast (hundreds of Kcycles).  FALCON SHALL be used in
+   conjunction with SHAKE-256 for all security categories above.
+
+   When SHAKE-256 is used, the OIDs are:
+
+   id-falcon-shake256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-falcon-shake(1) 2 }.
 
    When the id-falcon-shake256 algorithm identifier appears in the
    algorithm field as an AlgorithmIdentifier, the encoding MUST omit the
@@ -309,27 +314,22 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
 
    When SHA3 is used, the OIDs are:
 
-   id-gemss-sha3-256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-gemss-sha3(3) 22 }.
+   id-gemss-sha3-256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-gemss-sha3(1) 3 }.
 
-   id-gemss-sha3-384 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-gemss-sha3(3) 23 }.
+   id-gemss-sha3-384 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-gemss-sha3(1) 4 }.
 
-   id-gemss-sha3-512 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-gemss-sha3(3) 24 }.
+   id-gemss-sha3-512 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-gemss-sha3(1) 5 }.
 
    When the id-gemss-sha3-256, id-gemss-sha3-384 or id-gemss-sha3-512
    algorithm identifier appears in the algorithm field as an
    AlgorithmIdentifier, the encoding MUST omit the parameters field.
    That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one
-   component, the OID id-gemss-sha3-256, id-gemss-sha3-384, or id-gemss-
-   sha3-512.
-
-
-
 
 
 
@@ -337,6 +337,9 @@ C. F. Pereira             Expires May 23, 2020                  [Page 6]
 
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
+
+   component, the OID id-gemss-sha3-256, id-gemss-sha3-384, or id-gemss-
+   sha3-512.
 
 3.4.  LUOV Signature
 
@@ -360,13 +363,13 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
 
    When SHAKE is used, the OIDs are:
 
-   id-luov-shake-128 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-luov-shake(3) 25 }.
+   id-luov-shake-128 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-luov-shake(1) 6 }.
 
-   id-luov-shake-256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-luov-shake(3) 26 }.
+   id-luov-shake-256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-luov-shake(1) 7 }.
 
    When the id-luov-shake-128 or id-luov-shake-256 algorithm identifier
    appears in the algorithm field as an AlgorithmIdentifier, the
@@ -383,9 +386,6 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
    In terms of space, public keys are small (46-64 B) and signatures are
    moderate (about 2.6-5.5 KB).  From a computational efficiency point
    of view, KeyGen, Sign and Verify have moderate speed (few million
-   cycles).  MQDSS SHALL be used in conjunction with SHAKE-256 for
-   matching the security categories above.
-
 
 
 
@@ -394,11 +394,14 @@ C. F. Pereira             Expires May 23, 2020                  [Page 7]
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
 
+   cycles).  MQDSS SHALL be used in conjunction with SHAKE-256 for
+   matching the security categories above.
+
    When SHAKE is used, the OIDs are:
 
-   id-mqdss-shake-256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-mqdss-shake(3) 27 }.
+   id-mqdss-shake-256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-mqdss-shake(3) 8 }.
 
    When the id-mqdss-shake-256 algorithm identifier appears in the
    algorithm field as an AlgorithmIdentifier, the encoding MUST omit the
@@ -420,13 +423,13 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
 
    When SHAKE is used, the OIDs are:
 
-   id-picnic-shake-128 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-picnic-shake(3) 28 }.
+   id-picnic-shake-128 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-picnic-shake(1) 9 }.
 
-   id-picnic-shake-256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-picnic-shake(3) 29 }.
+   id-picnic-shake-256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-picnic-shake(1) 10 }.
 
    When the id-picnic-shake-128 or id-picnic-shake-256 algorithm
    identifier appears in the algorithm field as an AlgorithmIdentifier,
@@ -439,9 +442,6 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
    qTesla is a digital signature whose security is based on the hardness
    of lattice problems [qTesla].  qTesla features two types of design
    with respect to security, i.e., provable and heuristic security.  The
-   heuristic parameters were recently considered weaker and are being
-   removed.  For the provably-secure versions, two parameter sets
-   achieving categories 1 and 3 are provided.  qTesla SHALL be used in
 
 
 
@@ -450,18 +450,21 @@ C. F. Pereira             Expires May 23, 2020                  [Page 8]
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
 
+   heuristic parameters were recently considered weaker and are being
+   removed.  For the provably-secure versions, two parameter sets
+   achieving categories 1 and 3 are provided.  qTesla SHALL be used in
    conjunction with SHAKE-128 for matching category 1 or SHAKE-256 for
    matching category 3.
 
    When SHAKE is used, the OIDs are:
 
-   id-qtesla-shake-128 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-qtesla-shake(3) 30 }.
+   id-qtesla-shake-128 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-qtesla-shake(1) 11 }.
 
-   id-qtesla-shake-256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-qtesla-shake(3) 31 }.
+   id-qtesla-shake-256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-qtesla-shake(1) 12 }.
 
    When the id-qtesla-shake-128 or id-qtesla-shake-256 algorithm
    identifier appears in the algorithm field as an AlgorithmIdentifier,
@@ -486,17 +489,14 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
 
    When SHA3 is used, the OIDs are:
 
-   id-rainbow-sha3-256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-rainbow-sha3(3) 32 }.
+   id-rainbow-sha3-256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-rainbow-sha3(1) 13 }.
 
-   id-rainbow-sha3-384 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-rainbow-sha3(3) 33 }.
+   id-rainbow-sha3-384 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-rainbow-sha3(1) 14 }.
 
-   id-rainbow-sha3-512 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-rainbow-sha3(3) 34 }.
 
 
 
@@ -505,6 +505,10 @@ C. F. Pereira             Expires May 23, 2020                  [Page 9]
 
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
+
+   id-rainbow-sha3-512 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-rainbow-sha3(1) 15 }.
 
    When the id-rainbow-sha3-256, id-rainbow-sha3-384 or id-rainbow-
    sha3-512 algorithm identifier appears in the algorithm field as an
@@ -527,13 +531,13 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
 
    When SHAKE or SHA3 is used, the OIDs are:
 
-   id-sphincsp-shake-256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-sphincsp-shake(3) 35 }.
+   id-sphincsp-shake-256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-sphincsp-shake(1) 16 }.
 
-   id-sphincsp-sha3-256 OBJECT IDENTIFIER ::= { joint-iso-ccitt(2)
-   country(16) us(840) organization(1) gov(101) csor(3) algorithms(4)
-   id-sphincsp-sha3(3) 36 }.
+   id-sphincsp-sha3-256 OBJECT IDENTIFIER ::= { iso(1) identified-
+   organization(3) dod(6) internet(1) private(4) enterprise(1)
+   evolutionQ(54944) algorithms(1) id-sphincsp-sha3(1) 17 }.
 
    When the id-sphincsp-shake-256 or id-sphincsp-sha3-256 algorithm
    identifier appears in the algorithm field as an AlgorithmIdentifier,
@@ -543,17 +547,13 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
 
 4.  IANA Considerations
 
-   The OIDs defined in this document are suggested to go under the NIST
-   arc (sigAlgs) as it appears to be the most natural for them.  Since
-   we expect these algorithms to be a NIST standard.  Other arcs may be
-   considered as well.
+   The OIDs defined in this document are suggested to go under the
+   evolutionQ PEN arc, but the NIST arc mentioned in Section 1 appears
+   to be the most natural one once the post-quantum signatures get
+   standardized by 2024.
 
-5.  Security Considerations
 
-   As mentioned in Section 1, the object identifiers defined in this
-   document take into account the underlying hash function adopted in
-   each post-quantum signature scheme, and does not introduce extra
-   definitions for the (optional) parameters for each scheme.  This is
+
 
 
 
@@ -562,6 +562,12 @@ C. F. Pereira             Expires May 23, 2020                 [Page 10]
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
 
+5.  Security Considerations
+
+   As mentioned in Section 1, the object identifiers defined in this
+   document take into account the underlying hash function adopted in
+   each post-quantum signature scheme, and does not introduce extra
+   definitions for the (optional) parameters for each scheme.  This is
    because it is likely that particular parameter sets change in the
    next couple years of standardization until 2024.  Defining the names
    in terms of security categories is deemed to be a suitable approach
@@ -601,12 +607,6 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
               (CRL) Profile", RFC 3279, April 2002,
               <https://www.rfc-editor.org/info/rfc3279>.
 
-   [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
-              Housley, R., and W. Polk, "Internet X.509 Public Key
-              Infrastructure Certificate and Certificate Revocation List
-              (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
-              <https://www.rfc-editor.org/info/rfc5280>.
-
 
 
 
@@ -617,6 +617,12 @@ C. F. Pereira             Expires May 23, 2020                 [Page 11]
 
 Internet-Draft          pereira-pq-signature-oids          November 2019
 
+
+   [RFC5280]  Cooper, D., Santesson, S., Farrell, S., Boeyen, S.,
+              Housley, R., and W. Polk, "Internet X.509 Public Key
+              Infrastructure Certificate and Certificate Revocation List
+              (CRL) Profile", RFC 5280, DOI 10.17487/RFC5280, May 2008,
+              <https://www.rfc-editor.org/info/rfc5280>.
 
    [RFC5758]  Dang, Q., Santesson, S., Moriarty, K., Brown, D., and T.
               Polk, "Internet X.509 Public Key Infrastructure:
@@ -655,6 +661,19 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
               signatures", IACR Cryptology ePrint Archive , 2016,
               <https://eprint.iacr.org/2016/708>.
 
+
+
+
+
+
+
+
+
+C. F. Pereira             Expires May 23, 2020                 [Page 12]
+
+Internet-Draft          pereira-pq-signature-oids          November 2019
+
+
    [PICNIC]   Chase, M., Derler, D., Goldfeder, S., Orlandi, C.,
               Ramacher, S., Rechberger, C., Slamanig, D., and G.
               Zaverucha, "Post-quantum zero-knowledge and signatures
@@ -666,13 +685,6 @@ Internet-Draft          pereira-pq-signature-oids          November 2019
               E. Ricardini, "The Lattice-Based Digital Signature Scheme
               qTESLA", IACR Cryptology ePrint Archive , 2019,
               <https://eprint.iacr.org/2019/085>.
-
-
-
-C. F. Pereira             Expires May 23, 2020                 [Page 12]
-
-Internet-Draft          pereira-pq-signature-oids          November 2019
-
 
    [RAINBOW]  Ding, J. and D. Schmidt, "Rainbow, a New Multivariable
               Polynomial Signature Scheme", 2005,
@@ -691,18 +703,6 @@ Author's Address
    evolutionQ Inc. / IQC, University of Waterloo
 
    Email: geovandro.pereira@evolutionq.com
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

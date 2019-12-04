@@ -45,9 +45,11 @@
 
  			<t> Precisely, this document defines additional contents for the "signatureAlgorithm", "signatureValue", "signature" and "subjectPublicKeyInfo" fields within Internet X.509 certificates and CRLs <xref target="RFC5280"/> when these objects are signed using pure post-quantum signature algorithms with SHA3 or SHAKE hash algorithms <xref target="FIPS202"/>. The SHA3 and SHAKE instances explicitly used in the object identifiers (OID) definitions are the ones adopted by the NIST second round candidates.</t>
 			<t> This document does not identify (optional) parameters for each algorithm identifier. This is because the ongoing candidates are likely to change parameter sets in the coming years and this document rather focuses on high-level identifiers.</t>
-			<t> The OIDs provided are suggested to go under the NIST signature algorithm arc in the OID tree <xref target="NIST-OIDS"/>, i.e.:</t> 
+			<t> The OIDs defined in this document are currently allocated under the following evolutionQ arc in the OID tree:</t>
+			<t>	iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) sigAlgs(1) </t>
+			<t> Note that once the NIST algorithms are standardized by around 2024, their natural arc to go in the OID tree <xref target="NIST-OIDS"/> is:</t> 
 			<t> joint-iso-itu-t(2) &dash; country(16) &dash; us(840) &dash; organization(1) &dash; gov(101) &dash; csor(3) &dash; nistAlgorithm(4) &dash; sigAlgs(4). </t> 
-			<t> Note that the field sigAlgs already contains identifiers ranging from 1 to 16, allocated for (EC)DSA and RSA. In this specification identifiers starting from 20 and above are reserved for the post-quantum signatures with their different parameter sets.</t>
+			<t> If the NIST arc is to be adopted, note that the field sigAlgs already contains identifiers ranging from 1 to 16, allocated for (EC)DSA and RSA. Thus identifiers starting from 20 and above can be reserved for the post-quantum signatures with their different parameter sets.</t>
 
 			<t> This document extends <xref target="RFC3279"/> that defines algorithm identifiers for classical signatures, and complements the update <xref target="RFC5758"/>, which focuses on the specification of OIDs for extra classical signatures. </t> <!-- OIDs defined here are crucial for <xref target="PQ-X.509"/>, which extends <xref target="RFC5280"/> for accepting post-quantum X.509 certificates.</t> -->
 
@@ -125,9 +127,9 @@
 			<t>
 			   When SHAKE-256 is used, the OIDs are: </t>
 
-			 <t> id-dilithium-shake256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			     country(16) us(840) organization(1) gov(101) csor(3)
-			     algorithms(4) id-dilithium-shake(3) 20 }. </t>		       
+			<t> 
+			 	id-dilithium-shake256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-dilithium-shake(1) 1 }. </t>	
+
 			<t>
 			   When the id-dilithium-shake256 identifier appears in the algorithm field as an AlgorithmIdentifier,
 			   the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, the OID id-dilithium-shake256. </t>
@@ -142,12 +144,11 @@
 			<t>
 			   When SHAKE-256 is used, the OIDs are: </t>
 
-			<t> id-falcon-shake256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-falcon-shake(3) 21 }. </t>
+			<t> 
+				id-falcon-shake256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-falcon-shake(1) 2 }. </t>
+
 			<t>
-			   When the id-falcon-shake256 algorithm
-			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   When the id-falcon-shake256 algorithm identifier appears in the algorithm field as an AlgorithmIdentifier,
 			   the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, the OID id-falcon-shake256.</t>
 		    </section>	
 		    
@@ -161,24 +162,18 @@
 			<t>
 			   When SHA3 is used, the OIDs are: </t>
 
-			<t> id-gemss-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-gemss-sha3(3) 22 }. </t>
+			<t> 
+			   id-gemss-sha3-256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-gemss-sha3(1) 3 }. </t>
 
 			<t>
-			   id-gemss-sha3-384 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-gemss-sha3(3) 23 }.</t>		       
+			   id-gemss-sha3-384 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-gemss-sha3(1) 4 }.</t>		       
 
 			<t>
-			   id-gemss-sha3-512 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-gemss-sha3(3) 24 }. </t>
+			   id-gemss-sha3-512 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-gemss-sha3(1) 5 }. </t>
 		       
 
 			<t>
-			   When the id-gemss-sha3-256, id-gemss-sha3-384 or id-gemss-sha3-512 algorithm
-			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   When the id-gemss-sha3-256, id-gemss-sha3-384 or id-gemss-sha3-512 algorithm identifier appears in the algorithm field as an AlgorithmIdentifier,
 			   the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, the OID id-gemss-sha3-256,
 			   id-gemss-sha3-384, or id-gemss-sha3-512.</t>
 		    </section>		
@@ -196,18 +191,14 @@
 			<t>
 			   When SHAKE is used, the OIDs are: </t>
 
-			<t> id-luov-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-luov-shake(3) 25 }. </t>
+			<t> 
+				id-luov-shake-128 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-luov-shake(1) 6 }. </t>
 
 			<t>
-			   	id-luov-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-luov-shake(3) 26 }.</t>
+			   	id-luov-shake-256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-luov-shake(1) 7 }.</t>
 
 			<t>
-			   When the id-luov-shake-128 or id-luov-shake-256 algorithm
-			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   When the id-luov-shake-128 or id-luov-shake-256 algorithm identifier appears in the algorithm field as an AlgorithmIdentifier,
 			   the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
 			   the OID id-luov-shake-128, or id-luov-shake-256.</t>
 		    </section>			
@@ -222,9 +213,9 @@
 			<t>
 			   When SHAKE is used, the OIDs are: </t>
 
-			  <t> id-mqdss-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-mqdss-shake(3) 27 }. </t>
+			<t> 
+			  	id-mqdss-shake-256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-mqdss-shake(3) 8 }. </t>
+
 			<t>
 			   When the id-mqdss-shake-256 algorithm
 			   identifier appears in the algorithm field as an AlgorithmIdentifier,
@@ -243,18 +234,14 @@
 			<t>
 			   When SHAKE is used, the OIDs are: </t>
 
-			<t> id-picnic-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-picnic-shake(3) 28 }. </t>		       
+			<t> 
+				id-picnic-shake-128 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-picnic-shake(1) 9 }. </t>		       
 
 			<t>
-			   id-picnic-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-picnic-shake(3) 29 }.</t>		      
+				id-picnic-shake-256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-picnic-shake(1) 10 }.</t>		      
 			       			       			       
 			<t>
-			   When the id-picnic-shake-128 or id-picnic-shake-256 algorithm
-			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   When the id-picnic-shake-128 or id-picnic-shake-256 algorithm identifier appears in the algorithm field as an AlgorithmIdentifier,
 			   the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
 			   the OID id-picnic-shake-128 or id-picnic-shake-256.</t>
 			</section>
@@ -273,18 +260,15 @@
 			<t>
 			   When SHAKE is used, the OIDs are: </t>
 
-			<t> id-qtesla-shake-128 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-qtesla-shake(3) 30 }. </t>
+			<t> 
+				id-qtesla-shake-128 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-qtesla-shake(1) 11 }. </t>
 
-			<t> id-qtesla-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-qtesla-shake(3) 31 }. </t>
+			<t> 
+				id-qtesla-shake-256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-qtesla-shake(1) 12 }. </t>
 
 			<t>
 			   When the id-qtesla-shake-128 or id-qtesla-shake-256 algorithm
-			   identifier appears in the algorithm field as an AlgorithmIdentifier,
-			   the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
+			   identifier appears in the algorithm field as an AlgorithmIdentifier, the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
 			   the OID id-qtesla-shake-128 or id-qtesla-shake-256.</t>
 		    </section>			
 
@@ -299,20 +283,17 @@
 			<t>
 			   When SHA3 is used, the OIDs are: </t>
 
-			<t> id-rainbow-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-rainbow-sha3(3) 32 }. </t>
+			<t> 
+				id-rainbow-sha3-256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-rainbow-sha3(1) 13 }. </t>
+
 			<t>
-			   id-rainbow-sha3-384 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-rainbow-sha3(3) 33 }.</t>
+				id-rainbow-sha3-384 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-rainbow-sha3(1) 14 }.</t>
+			
 			<t>
-			   id-rainbow-sha3-512 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-rainbow-sha3(3) 34 }. </t>
+				id-rainbow-sha3-512 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-rainbow-sha3(1) 15 }. </t>
+
 			<t>
-			   When the id-rainbow-sha3-256, id-rainbow-sha3-384 or id-rainbow-sha3-512 algorithm
-			   identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   When the id-rainbow-sha3-256, id-rainbow-sha3-384 or id-rainbow-sha3-512 algorithm identifier appears in the algorithm field as an AlgorithmIdentifier,
 			   the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
 			   the OID id-rainbow-sha3-256, id-rainbow-sha3-384 or id-rainbow-sha3-512.</t>
 		    </section>			       	    
@@ -328,17 +309,14 @@
 			<t>
 			   When SHAKE or SHA3 is used, the OIDs are: </t>
 
-			<t> id-sphincsp-shake-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-sphincsp-shake(3) 35 }. </t>
+			<t> 
+				id-sphincsp-shake-256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-sphincsp-shake(1) 16 }. </t>
 		       
-			<t> id-sphincsp-sha3-256 OBJECT IDENTIFIER  ::=  { joint-iso-ccitt(2)
-			       country(16) us(840) organization(1) gov(101) csor(3)
-			       algorithms(4) id-sphincsp-sha3(3) 36 }. </t>	
+			<t> 
+				id-sphincsp-sha3-256 OBJECT IDENTIFIER  ::=  { iso(1) identified-organization(3) dod(6) internet(1) private(4) enterprise(1) evolutionQ(54944) algorithms(1) id-sphincsp-sha3(1) 17 }. </t>	
 			
 			<t>
-			   When the id-sphincsp-shake-256 or id-sphincsp-sha3-256 
-			   algorithm identifier appears in the algorithm field as an AlgorithmIdentifier,
+			   When the id-sphincsp-shake-256 or id-sphincsp-sha3-256 algorithm identifier appears in the algorithm field as an AlgorithmIdentifier,
 			   the encoding MUST omit the parameters field. That is, the AlgorithmIdentifier SHALL be a SEQUENCE of one component, 
 			   the OID id-sphincsp-shake-256 or id-sphincsp-sha3-256.</t>
 		    </section>			       	    		    		   
@@ -346,7 +324,8 @@
  		</section>
 		<section anchor="iana-considerations" title="IANA Considerations">
 
-			<t>The OIDs defined in this document are suggested to go under the NIST arc (sigAlgs) as it appears to be the most natural for them. Since we expect these algorithms to be a NIST standard. Other arcs may be considered as well. </t>
+			<t>The OIDs defined in this document are suggested to go under the evolutionQ PEN arc, but the NIST arc mentioned in <xref target="introduction"/> appears to be the most natural one once the 
+			   post-quantum signatures get standardized by 2024. </t>
 
 		</section> 		
 		<section anchor="security-considerations" title="Security Considerations">
